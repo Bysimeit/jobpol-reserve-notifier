@@ -1,0 +1,13 @@
+services:
+  notifier:
+    build: .
+    container_name: jobpol-reserve-notifier
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DATA_DIR=/app/data
+    volumes:
+      - ./data:/app/data
+      - ./debug:/app/debug
