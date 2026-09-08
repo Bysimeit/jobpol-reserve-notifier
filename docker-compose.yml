@@ -1,5 +1,6 @@
 services:
   notifier:
+    image: ghcr.io/bysimeit/jobpol-reserve-notifier:latest
     build: .
     container_name: jobpol-reserve-notifier
     restart: unless-stopped

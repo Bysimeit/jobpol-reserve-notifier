@@ -13,19 +13,37 @@ Candidates in the Belgian Police recruitment reserve must monitor Jobpol to appl
 * Formatted Discord alerts with title, police zone, deadline, and direct link
 * Persistent history tracking to prevent duplicate notifications
 * Multilingual support for English, Dutch, French, and German
-* Docker and Docker Compose support for continuous background deployment
+* Published Docker image on GitHub Packages (GHCR) for instant setup
 * One-click Windows runner (`run.bat`) for simple local execution
 
 ## Quick Start
 
-### Option 1: Docker (Recommended)
+### Option 1: Docker via GitHub Container Registry (Recommended)
 
-1. Copy `.env.example` to `.env` and fill in your settings:
-   ```bash
-   cp .env.example .env
+Pull the ready-to-use image directly:
+
+```bash
+docker pull ghcr.io/bysimeit/jobpol-reserve-notifier:latest
+```
+
+1. Create your `.env` file with your settings:
+   ```env
+   LANGUAGE=FR
+   JOBPOL_PASSWORD='your_laureate_password'
+   DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/...
    ```
 
-2. Start the service:
+2. Start the container with Docker:
+   ```bash
+   docker run -d \
+     --name jobpol-reserve-notifier \
+     --restart unless-stopped \
+     -v $(pwd)/.env:/app/.env:ro \
+     -v $(pwd)/data:/app/data \
+     ghcr.io/bysimeit/jobpol-reserve-notifier:latest
+   ```
+
+   Or using Docker Compose:
    ```bash
    docker compose up -d
    ```
