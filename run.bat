@@ -21,9 +21,6 @@ call venv\Scripts\activate.bat
 echo Checking dependencies...
 pip install -r requirements.txt > nul 2>&1
 
-echo Checking Chromium...
-playwright install chromium > nul 2>&1
-
 if not exist ".env" (
     echo Missing .env configuration.
     copy .env.example .env > nul

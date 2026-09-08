@@ -42,7 +42,6 @@ Candidates in the Belgian Police recruitment reserve must monitor Jobpol to appl
    python -m venv venv
    .\venv\Scripts\activate
    pip install -r requirements.txt
-   playwright install chromium
    ```
 
 2. Configure your `.env` file.
