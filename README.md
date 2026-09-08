@@ -33,19 +33,19 @@ docker pull ghcr.io/bysimeit/jobpol-reserve-notifier:latest
    DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/...
    ```
 
-2. Start the container with Docker:
-   ```bash
-   docker run -d \
-     --name jobpol-reserve-notifier \
-     --restart unless-stopped \
-     -v $(pwd)/.env:/app/.env:ro \
-     -v $(pwd)/data:/app/data \
-     ghcr.io/bysimeit/jobpol-reserve-notifier:latest
-   ```
-
-   Or using Docker Compose:
+2. Start the container with Docker Compose (Recommended):
    ```bash
    docker compose up -d
+   ```
+
+   Windows (PowerShell) :
+   ```powershell
+   docker run -d --name jobpol-reserve-notifier --restart unless-stopped -v "${PWD}/.env:/app/.env:ro" -v "${PWD}/data:/app/data" ghcr.io/bysimeit/jobpol-reserve-notifier:latest
+   ```
+
+   Linux / macOS :
+   ```bash
+   docker run -d --name jobpol-reserve-notifier --restart unless-stopped -v "$(pwd)/.env:/app/.env:ro" -v "$(pwd)/data:/app/data" ghcr.io/bysimeit/jobpol-reserve-notifier:latest
    ```
 
 3. View logs:
