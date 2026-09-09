@@ -41,6 +41,7 @@ MESSAGES = {
         "discord_link_text": "View on Jobpol",
         "discord_footer": "Jobpol Reserve Notifier • Integrated Police",
         "not_specified": "Not specified",
+        "filters_applied": "Active filters: Unit={unit}, Grade={grade}, Region={region}",
     },
     "NL": {
         "banner_title": "JOBPOL WERVINGSRESERVE NOTIFIER",
@@ -84,6 +85,7 @@ MESSAGES = {
         "discord_link_text": "Bekijk op Jobpol",
         "discord_footer": "Jobpol Reserve Notifier • Geïntegreerde Politie",
         "not_specified": "Niet opgegeven",
+        "filters_applied": "Actieve filters: Eenheid={unit}, Graad={grade}, Regio={region}",
     },
     "FR": {
         "banner_title": "JOBPOL RESERVE RECRUTEMENT NOTIFIER",
@@ -127,6 +129,7 @@ MESSAGES = {
         "discord_link_text": "Consulter sur Jobpol",
         "discord_footer": "Jobpol Reserve Notifier • Police Intégrée",
         "not_specified": "Non précisé",
+        "filters_applied": "Filtres actifs: Unité={unit}, Grade={grade}, Région={region}",
     },
     "DE": {
         "banner_title": "JOBPOL EINSTELLUNGSRESERVE NOTIFIER",
@@ -170,6 +173,7 @@ MESSAGES = {
         "discord_link_text": "Auf Jobpol ansehen",
         "discord_footer": "Jobpol Reserve Notifier • Integrierte Polizei",
         "not_specified": "Nicht angegeben",
+        "filters_applied": "Aktive Filter: Einheit={unit}, Dienstgrad={grade}, Region={region}",
     }
 }
 

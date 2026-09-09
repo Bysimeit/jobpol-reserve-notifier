@@ -1,7 +1,7 @@
 import hashlib
 import sys
 from urllib.parse import urljoin
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Tuple
 
 if sys.platform == "win32":
     try:
@@ -19,8 +19,99 @@ from config import (
     DEBUG,
     DEBUG_DIR,
     LANGUAGE,
+    FILTER_UNIT,
+    FILTER_GRADE,
+    FILTER_REGION,
 )
 from translations import get_text
+
+
+UNIT_MAP = {
+    "LOCAL": "0",
+    "LOCALE": "0",
+    "POLICE_LOCALE": "0",
+    "POLICE_LOCAL": "0",
+    "0": "0",
+    "FEDERAL": "1",
+    "FEDERALE": "1",
+    "POLICE_FEDERALE": "1",
+    "POLICE_FEDERAL": "1",
+    "1": "1",
+}
+
+GRADE_MAP = {
+    "AGENT": "4892",
+    "AGENT_POLICE": "4892",
+    "AGENT_DE_POLICE": "4892",
+    "SECURISATION": "4988",
+    "AGENT_SECURISATION": "4988",
+    "AGENT_DE_SECURISATION": "4988",
+    "INSPECTEUR": "4895",
+    "INSPECTEUR_POLICE": "4895",
+    "INSPECTEUR_DE_POLICE": "4895",
+    "COMMISSAIRE": "4901",
+    "ECOFIN": "5006",
+    "INPP_ECOFIN": "5006",
+    "ICT": "5003",
+    "INPP_ICT": "5003",
+    "ASSISTANT": "5000",
+    "ASSISTANT_POLICE": "5000",
+    "LABO": "5012",
+    "INPP_LABO": "5012",
+    "ISLAMOLOGUE": "5009",
+    "INPP_ISLAMOLOGUE": "5009",
+}
+
+REGION_MAP = {
+    "ANVERS": "3265",
+    "ANTWERPEN": "3265",
+    "BRABANT_FLAMAND": "3275",
+    "VLAAMS_BRABANT": "3275",
+    "BRABANT_WALLON": "3274",
+    "WAALS_BRABANT": "3274",
+    "BRUXELLES": "3266",
+    "BRUSSEL": "3266",
+    "BRUXELLES_CAPITALE": "3266",
+    "FLANDRE_OCCIDENTALE": "3267",
+    "WEST_VLAANDEREN": "3267",
+    "FLANDRE_ORIENTALE": "3268",
+    "OOST_VLAANDEREN": "3268",
+    "HAINAUT": "3269",
+    "HENEGOUWEN": "3269",
+    "LIEGE": "3270",
+    "LUIK": "3270",
+    "LIMBOURG": "3271",
+    "LIMBURG": "3271",
+    "LUXEMBOURG": "3272",
+    "LUXEMBURG": "3272",
+    "NAMUR": "3273",
+    "NAMEN": "3273",
+    "INTERNATIONAL": "_abroad",
+    "ABROAD": "_abroad",
+}
+
+
+def build_filter_params(unit: str, grade: str, region: str) -> List[Tuple[str, str]]:
+    params: List[Tuple[str, str]] = []
+    if unit:
+        u_items = [u.strip().upper() for u in unit.split(",") if u.strip()]
+        for idx, item in enumerate(u_items):
+            val = UNIT_MAP.get(item, item if item in ("0", "1") else None)
+            if val:
+                params.append((f"unit[{idx}]", val))
+    if grade:
+        g_items = [g.strip().upper() for g in grade.split(",") if g.strip()]
+        for idx, item in enumerate(g_items):
+            val = GRADE_MAP.get(item, item if item.isdigit() else None)
+            if val:
+                params.append((f"diploma[{idx}]", val))
+    if region:
+        r_items = [r.strip().upper() for r in region.split(",") if r.strip()]
+        for idx, item in enumerate(r_items):
+            val = REGION_MAP.get(item, item if (item.isdigit() or item == "_abroad") else None)
+            if val:
+                params.append((f"region[{idx}]", val))
+    return params
 
 
 def _generate_job_id(title: str, link: str, zone: str = "") -> str:
@@ -78,6 +169,27 @@ def scrape_jobpol_reserve(headless: bool = None) -> List[Dict[str, Any]]:
                 current_html = auth_resp.text
                 current_url = auth_resp.url
                 print(get_text("form_submitted", LANGUAGE))
+
+        filter_params = build_filter_params(FILTER_UNIT, FILTER_GRADE, FILTER_REGION)
+        if filter_params:
+            print(
+                get_text(
+                    "filters_applied",
+                    LANGUAGE,
+                    unit=FILTER_UNIT or "ALL",
+                    grade=FILTER_GRADE or "ALL",
+                    region=FILTER_REGION or "ALL",
+                )
+            )
+            filtered_resp = session.get(
+                JOBPOL_URL,
+                params=filter_params,
+                headers={"Referer": current_url},
+                timeout=30,
+            )
+            if filtered_resp.status_code == 200:
+                current_html = filtered_resp.text
+                current_url = filtered_resp.url
 
         if DEBUG:
             html_path = DEBUG_DIR / "jobpol_page.html"

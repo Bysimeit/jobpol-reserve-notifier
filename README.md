@@ -18,39 +18,43 @@ Candidates in the Belgian Police recruitment reserve must monitor Jobpol to appl
 
 ## Quick Start
 
-### Option 1: Docker via GitHub Container Registry (Recommended)
+### Option 1: Docker (Recommended)
 
-Pull the ready-to-use image directly:
+Pre-built multi-architecture image (`amd64` / `arm64`) available on GitHub Packages:
 
 ```bash
 docker pull ghcr.io/bysimeit/jobpol-reserve-notifier:latest
 ```
 
-1. Create your `.env` file with your settings:
+1. Create your `.env` configuration file:
    ```env
    LANGUAGE=FR
    JOBPOL_PASSWORD='your_laureate_password'
    DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/...
    ```
 
-2. Start the container with Docker Compose (Recommended):
+2. Start the container:
+
+   #### With Docker Compose (Recommended)
    ```bash
    docker compose up -d
+   docker compose logs -f
    ```
 
-   Windows (PowerShell) :
-   ```powershell
-   docker run -d --name jobpol-reserve-notifier --restart unless-stopped -v "${PWD}/.env:/app/.env:ro" -v "${PWD}/data:/app/data" ghcr.io/bysimeit/jobpol-reserve-notifier:latest
-   ```
-
-   Linux / macOS :
+   #### With Docker CLI
+   Linux / Raspberry Pi:
    ```bash
    docker run -d --name jobpol-reserve-notifier --restart unless-stopped -v "$(pwd)/.env:/app/.env:ro" -v "$(pwd)/data:/app/data" ghcr.io/bysimeit/jobpol-reserve-notifier:latest
    ```
 
-3. View logs:
+   Windows (PowerShell):
+   ```powershell
+   docker run -d --name jobpol-reserve-notifier --restart unless-stopped -v "${PWD}/.env:/app/.env:ro" -v "${PWD}/data:/app/data" ghcr.io/bysimeit/jobpol-reserve-notifier:latest
+   ```
+
+   View logs:
    ```bash
-   docker compose logs -f
+   docker logs -f jobpol-reserve-notifier
    ```
 
 ### Option 2: Local Python
@@ -80,16 +84,45 @@ All settings are configured in `.env`:
 | `LANGUAGE` | Interface language: `EN`, `NL`, `FR`, `DE` | `EN` |
 | `JOBPOL_URL` | Recruitment reserve URL | Auto-selected by language |
 | `JOBPOL_PASSWORD` | Laureate access password | Required |
-| `DISCORD_WEBHOOK_URL` | Discord webhook URL | Required |
+| `DISCORD_WEBHOOK_URL` | Discord webhook URL | Required (or Bot Token) |
+| `DISCORD_BOT_TOKEN` | Discord bot token | Optional alternative |
+| `DISCORD_CHANNEL_ID` | Discord target channel ID | Required if using Bot Token |
+| `FILTER_UNIT` | Filter by unit: `LOCALE`, `FEDERAL` | Empty (All) |
+| `FILTER_GRADE` | Filter by grade: `INSPECTEUR`, `AGENT`, `COMMISSAIRE`, etc. | Empty (All) |
+| `FILTER_REGION` | Filter by region: `BRUXELLES`, `HAINAUT`, `LIEGE`, etc. | Empty (All) |
 | `CHECK_INTERVAL_MINUTES` | Minutes between consecutive checks | `30` |
 | `HEADLESS` | Run browser in background (`true` or `false`) | `true` |
 | `DEBUG` | Save debug screenshots in `debug/` | `false` |
 
-### Setting Up a Discord Webhook
+### Search Filters
 
+You can filter listings directly at the Jobpol source to monitor only targeted positions:
+
+```env
+FILTER_UNIT=LOCALE
+FILTER_GRADE=INSPECTEUR
+FILTER_REGION=BRUXELLES,BRABANT_WALLON
+```
+
+* **Unit (`FILTER_UNIT`)**: `LOCALE`, `FEDERAL`
+* **Grade (`FILTER_GRADE`)**: `INSPECTEUR`, `AGENT`, `COMMISSAIRE`, `SECURISATION`, `ECOFIN`, `ICT`, `LABO`, `ASSISTANT`
+* **Region (`FILTER_REGION`)**: `BRUXELLES`, `BRABANT_WALLON`, `BRABANT_FLAMAND`, `HAINAUT`, `LIEGE`, `NAMUR`, `LUXEMBOURG`, `ANVERS`, `LIMBOURG`, `FLANDRE_OCCIDENTALE`, `FLANDRE_ORIENTALE`, `INTERNATIONAL`
+
+Multiple values can be separated by commas (for example: `FILTER_REGION=BRUXELLES,HAINAUT`). Leaving a filter empty disables it and collects all matching entries.
+
+### Setting Up Discord Alerts
+
+You can choose either a Webhook or a Discord Bot:
+
+#### Method A: Discord Webhook (Recommended)
 1. Open your Discord server and go to your target channel.
 2. Open channel settings, navigate to **Integrations**, then click **Webhooks**.
 3. Create a new webhook, copy its URL, and paste it into `DISCORD_WEBHOOK_URL` in `.env`.
+
+#### Method B: Discord Bot
+1. Create an application and bot token in the Discord Developer Portal.
+2. Invite the bot to your server with permissions to send messages and embed links.
+3. Paste your token into `DISCORD_BOT_TOKEN` and your channel ID into `DISCORD_CHANNEL_ID` in `.env`.
 
 ## Commands Reference
 
