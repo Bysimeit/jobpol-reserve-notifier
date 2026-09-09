@@ -30,6 +30,10 @@ DISCORD_WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK_URL", "").strip()
 DISCORD_BOT_TOKEN = os.getenv("DISCORD_BOT_TOKEN", "").strip()
 DISCORD_CHANNEL_ID = os.getenv("DISCORD_CHANNEL_ID", "").strip()
 
+FILTER_UNIT = os.getenv("FILTER_UNIT", "").strip() or os.getenv("FILTER_UNITS", "").strip()
+FILTER_GRADE = os.getenv("FILTER_GRADE", "").strip() or os.getenv("FILTER_GRADES", "").strip()
+FILTER_REGION = os.getenv("FILTER_REGION", "").strip() or os.getenv("FILTER_REGIONS", "").strip()
+
 try:
     CHECK_INTERVAL_MINUTES = int(os.getenv("CHECK_INTERVAL_MINUTES", "30"))
 except ValueError:
